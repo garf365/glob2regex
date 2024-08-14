@@ -11,7 +11,9 @@ class Translator:
     DEFAULT_SEPARATOR_UNIX = "/"
 
     def __init__(self, separator=None):
-        if os.name == "nt":
+        if separator is not None:
+            self.separator = separator
+        elif os.name == "nt":
             self.separator = Translator.DEFAULT_SEPARATOR_WINDOWS
         else:
             self.separator = Translator.DEFAULT_SEPARATOR_UNIX
@@ -41,6 +43,8 @@ class Translator:
             elif self.is_previous_wildcard:
                 if c == "*":
                     result += ".*"
+                elif not self.separator:
+                    result += ".*" + c
                 else:
                     result += f"[^{self.separator}]*{c}"
                 self.is_previous_wildcard = False
@@ -74,6 +78,9 @@ class Translator:
         if self.is_next_escaped:
             result += "\\"
         elif self.is_previous_wildcard:
-            result += f"[^{self.separator}]*"
+            if self.separator:
+                result += f"[^{self.separator}]*"
+            else:
+                result += ".*"
 
         return result + "$"
