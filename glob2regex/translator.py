@@ -29,7 +29,7 @@ class Translator:
             raise ValueError("glob should be a string")
 
         self._init_translator()
-        result = r""
+        result = r"^"
 
         for c in glob:
             if self.is_next_escaped:
@@ -76,4 +76,4 @@ class Translator:
         elif self.is_previous_wildcard:
             result += f"[^{self.separator}]*"
 
-        return result
+        return result + "$"
