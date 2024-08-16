@@ -14,8 +14,8 @@ from glob2regex import Translator
         ("**", "^.*$"),
         ("*toto*", "^[^/]*toto[^/]*$"),
         ("*to*to", "^[^/]*to[^/]*to$"),
-        ("\[ab", "^\[ab$"),
-        ("*toto(", "^[^/]*toto\($"),
+        (r"\[ab", r"^\[ab$"),
+        ("*toto(", r"^[^/]*toto\($"),
         ("**toto**", "^.*toto.*$"),
     ],
 )
@@ -75,8 +75,8 @@ def test_custom_separator(os_name):
         ("**", "^.*$"),
         ("*toto*", "^[^-]*toto[^-]*$"),
         ("*to*to", "^[^-]*to[^-]*to$"),
-        ("\[ab", "^\[ab$"),
-        ("*toto(", "^[^-]*toto\($"),
+        (r"\[ab", r"^\[ab$"),
+        ("*toto(", r"^[^-]*toto\($"),
         ("**toto**", "^.*toto.*$"),
     ],
 )
@@ -95,8 +95,8 @@ def test_translator_with_custom_separator(glob, regex):
         ("**", "^.*$"),
         ("*toto*", "^.*toto.*$"),
         ("*to*to", "^.*to.*to$"),
-        ("\[ab", "^\[ab$"),
-        ("*toto(", "^.*toto\($"),
+        (r"\[ab", r"^\[ab$"),
+        ("*toto(", r"^.*toto\($"),
         ("**toto**", "^.*toto.*$"),
     ],
 )
