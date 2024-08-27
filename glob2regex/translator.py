@@ -7,10 +7,17 @@ import os
 
 
 class Translator:
+    #: Default separator for windows based system
     DEFAULT_SEPARATOR_WINDOWS = "\\"
+    #: Default separator for everyone else
     DEFAULT_SEPARATOR_UNIX = "/"
 
-    def __init__(self, separator=None):
+    def __init__(self, separator: str = None):
+        """Constructor of translator
+
+        :param str separator: Separator to be used. Use file separator if not given.
+                              For no separator, simply passe empty string
+        """
         if separator is not None:
             self.separator = separator
         elif os.name == "nt":
@@ -21,12 +28,19 @@ class Translator:
         self._init_translator()
 
     def _init_translator(self):
+        """Internal function to reinit translator for new translation"""
         self.is_next_escaped = False
         self.is_previous_wildcard = False
         self.is_previous_open_bracket = False
         self.is_in_bracket = False
 
     def translate(self, glob: str):
+        """Translate glob pattern to regex pattern
+
+        :param str glob: Glob pattern to translate
+        :returns: Regex equivalent of given glob pattern
+        :rtype: str
+        """
         if not isinstance(glob, str):
             raise ValueError("glob should be a string")
 
