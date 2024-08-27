@@ -26,6 +26,15 @@ def test_translate(glob, regex):
     assert translator.translate(glob) == regex
 
 
+@mock.patch("os.name", "posix")
+def test_translate_many_time():
+    translator = Translator()
+
+    assert translator.translate("a") == "^a$"
+    assert translator.translate("*") == "^[^/]*$"
+    assert translator.translate("**") == "^.*$"
+
+
 @pytest.mark.parametrize(
     "glob,s,match",
     [
