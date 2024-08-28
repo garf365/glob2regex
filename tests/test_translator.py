@@ -17,6 +17,10 @@ from glob2regex import Translator
         (r"\[ab", r"^\[ab$"),
         ("*toto(", r"^[^/]*toto\($"),
         ("**toto**", "^.*toto.*$"),
+        ("t?to", "^t.to$"),
+        ("t[ao]to", "^t[ao]to$"),
+        ("t\[\]to", "^t\[\]to$"),
+        ("t[[\]]to", "^t[[\]]to$"),
     ],
 )
 @mock.patch("os.name", "posix")
