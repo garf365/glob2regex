@@ -34,10 +34,12 @@ class Translator:
         self.is_previous_open_bracket = False
         self.is_in_bracket = False
 
-    def translate(self, glob: str):
+    def translate(self, glob: str, strict: bool = True):
         """Translate glob pattern to regex pattern
 
         :param str glob: Glob pattern to translate
+        :param bool strict: Enable strict mode, ie string should exactly match pattern.
+                            In term of regex, pattern starts with `^` and ends with `$`
         :returns: Regex equivalent of given glob pattern
         :rtype: str
         """
@@ -45,7 +47,7 @@ class Translator:
             raise ValueError("glob should be a string")
 
         self._init_translator()
-        result = r"^"
+        result = r"^" if strict else r""
 
         for c in glob:
             if self.is_next_escaped:
@@ -97,4 +99,7 @@ class Translator:
             else:
                 result += ".*"
 
-        return result + "$"
+        if strict:
+            return result + "$"
+
+        return "(" + result + r")\W"

@@ -1,6 +1,8 @@
-import mock
-import pytest
+import re
 
+import mock
+
+from glob2regex import compile
 from glob2regex import glob2regex
 from glob2regex import match
 
@@ -16,8 +18,8 @@ def test_helper_glob2regex(mock_translator_init):
 
     assert res == "mocked_value"
 
-    mock_translator_init.assert_called_with(None)
-    mock_translator.translate.assert_called_with("value")
+    mock_translator_init.assert_called_once_with(None)
+    mock_translator.translate.assert_called_once_with("value", True)
 
 
 @mock.patch("glob2regex.Translator", autospec=True)
@@ -31,26 +33,26 @@ def test_helper_glob2regex_with_custom_separator(mock_translator_init):
 
     assert res == "mocked_value"
 
-    mock_translator_init.assert_called_with("sep")
-    mock_translator.translate.assert_called_with("value")
+    mock_translator_init.assert_called_once_with("sep")
+    mock_translator.translate.assert_called_once_with("value", True)
 
 
-@pytest.mark.parametrize(
-    "pattern,value,expected",
-    [
-        ("toto", "toto", True),
-        ("*tot*", "toto", True),
-        ("toto", "tutu", False),
-        ("t*to", "toto", True),
-        ("t*to", "tato", True),
-        ("t*to", "tata", False),
-    ],
-)
-@mock.patch("os.name", "posix")
-def test_helper_match(pattern, value, expected):
-    import re
+@mock.patch("re.match")
+@mock.patch("glob2regex.glob2regex")
+def test_helper_match(mock_glob2regex, mock_re_match):
+    mock_glob2regex.return_value = "mocked_value"
+    mock_re_match.return_value = "result"
 
-    if expected:
-        assert isinstance(match(pattern, value), re.Match)
-    else:
-        assert match(pattern, value) is None
+    assert match("t*to", "toto", "sep", False) == "result"
+
+    mock_re_match.assert_called_once_with("mocked_value", "toto")
+    mock_glob2regex.assert_called_once_with("t*to", "sep", False)
+
+
+@mock.patch("glob2regex.glob2regex")
+def test_helper_compile(mock_glob2regex):
+    mock_glob2regex.return_value = "mocked_value"
+
+    assert isinstance(compile("t*to", "sep", False), re.Pattern)
+
+    mock_glob2regex.assert_called_once_with("t*to", "sep", False)

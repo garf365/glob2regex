@@ -5,7 +5,7 @@ Glob2Regex library, for globber which want powerfull of regex
 from .translator import Translator  # noqa
 
 
-def glob2regex(pattern: str, separator: str = None):
+def glob2regex(pattern: str, separator: str = None, strict: bool = True):
     """Translate the given glob pattern into regex form, using custom separator.
     If no seperator is given, glob2regex will use file separator according operating
     system: "\\" for Windows, "/" for every other (real) systems
@@ -18,14 +18,16 @@ def glob2regex(pattern: str, separator: str = None):
     :param str pattern: Glob pattern to translate
     :param str separator: Separator to be used. Use file separator if not given. For no
                           separator, simply passe empty string
+    :param bool strict: Enable strict mode, ie string should exactly match pattern. In
+                        term of regex, pattern starts with `^` and ends with `$`
     :returns: regex equivalent to glob pattern
     :rtype: str
     """
     translator = Translator(separator)
-    return translator.translate(pattern)
+    return translator.translate(pattern, strict)
 
 
-def match(pattern: str, string: str, separator: str = None):
+def match(pattern: str, string: str, separator: str = None, strict: bool = True):
     """Return a re.Match object for string given, using glob pattern
 
     >>> match("t*to", "toto")
@@ -42,10 +44,10 @@ def match(pattern: str, string: str, separator: str = None):
     """
     import re
 
-    return re.match(glob2regex(pattern, separator), string)
+    return re.match(glob2regex(pattern, separator, strict), string)
 
 
-def compile(pattern: str, separator: str = None):
+def compile(pattern: str, separator: str = None, strict: bool = True):
     """Return a re.Pattern object for glob pattern given. Indeed, result of
     this function can be used exactly as result of re.compile
 
@@ -55,6 +57,10 @@ def compile(pattern: str, separator: str = None):
     >>> pattern.findall("toto")
     ['toto']
 
+    >>> pattern = compile("t?t?", " ", strict = False)
+    >>> pattern.findall("toto alpha tata beta tototo")
+    ['toto', 'tata']
+
     :param str pattern: Glob pattern to compile
     :param str separator: Separator to be used. Use file separator if not given. For no
                           separator, simply passe empty string
@@ -63,4 +69,4 @@ def compile(pattern: str, separator: str = None):
     """
     import re
 
-    return re.compile(glob2regex(pattern, separator))
+    return re.compile(glob2regex(pattern, separator, strict))
