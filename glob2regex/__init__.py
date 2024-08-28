@@ -10,6 +10,11 @@ def glob2regex(pattern: str, separator: str = None):
     If no seperator is given, glob2regex will use file separator according operating
     system: "\\" for Windows, "/" for every other (real) systems
 
+    >>> glob2regex("*toto*")
+    '^[^/]*toto[^/]*$'
+    >>> glob2regex("*toto*", "")
+    '^.*toto.*$'
+
     :param str pattern: Glob pattern to translate
     :param str separator: Separator to be used. Use file separator if not given. For no
                           separator, simply passe empty string
@@ -22,6 +27,11 @@ def glob2regex(pattern: str, separator: str = None):
 
 def match(pattern: str, string: str, separator: str = None):
     """Return a re.Match object for string given, using glob pattern
+
+    >>> match("t*to", "toto")
+    <re.Match object; span=(0, 4), match='toto'>
+    >>> match("t*to, "alpha")
+    None
 
     :param str pattern: Glob pattern to use
     :param str string: String to match
@@ -38,6 +48,12 @@ def match(pattern: str, string: str, separator: str = None):
 def compile(pattern: str, separator: str = None):
     """Return a re.Pattern object for glob pattern given. Indeed, result of
     this function can be used exactly as result of re.compile
+
+    >>> pattern = compile("t*to")
+    >>> pattern.match("toto")
+    <re.Match object; span=(0, 4), match='toto'>
+    >>> pattern.findall("toto")
+    ['toto']
 
     :param str pattern: Glob pattern to compile
     :param str separator: Separator to be used. Use file separator if not given. For no
